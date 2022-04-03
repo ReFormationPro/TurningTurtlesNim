@@ -1,19 +1,24 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: ['babel-polyfill', './src/index.ts'],
   devtool: 'inline-source-map',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.(ts|js)?$/,
         exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-typescript"],
+          },
+        },
       },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.ts', '.js'],
   },
   output: {
     filename: 'bundle.js',

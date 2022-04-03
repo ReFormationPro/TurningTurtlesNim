@@ -1,4 +1,3 @@
-import { isNumberObject } from "util/types";
 import {sleep} from "./utils";
 
 export default class NimGUI {
@@ -9,7 +8,7 @@ export default class NimGUI {
     onPlayerChangedListener: (player: string) => void;
     onGameOverListener: (winner: string) => void;
     vsCPU!: boolean;
-    static SLEEP_MS = 3000;
+    static SLEEP_MS: number = 3000;
 
     constructor(gameDiv: HTMLDivElement,
             onPlayerChangedListener: (player: string) => void = ()=>{},
@@ -101,8 +100,8 @@ export default class NimGUI {
         }
     }
     changePlayer(newPlayer: number | void) {
-        if (isNumberObject(newPlayer)) {
-            this.player = newPlayer;
+        if (!isNaN(newPlayer as number)) {
+            this.player = newPlayer as number;
         } else {
             // Switch players
             if (this.player == 1) {

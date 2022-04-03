@@ -1,0 +1,27 @@
+.chip {
+    display: block;
+    width: 100px;
+    height: 50px;
+    border-radius: 10px;
+    border-color: black;
+    border-width: thin;
+    border-style: solid;
+}
+
+.nimPile {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+#nimGame {
+    background-color: azure;
+    width: 100%;
+    height: 500px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+h3, #info {
+    text-align: center;
+}

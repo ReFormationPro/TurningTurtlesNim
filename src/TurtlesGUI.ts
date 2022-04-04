@@ -5,6 +5,8 @@ export default class TurtlesGUISlave {
     game: HTMLElement;
     static games: TurtlesGUISlave[] = [];
     nimGame: NimGUI;
+    firstTurtle: number;
+    secondTurtle: number;
 
     constructor(game: HTMLElement, nimGame: NimGUI, turtles: number) {
         this.turtles = turtles;
@@ -38,12 +40,89 @@ export default class TurtlesGUISlave {
             turtle.innerText = "H";
         }
     }
+    getTurtle(turtleNo: number): HTMLElement {
+        return this.game.children[turtleNo-1] as HTMLElement;
+    }
+    getTurtleState(turtleNo: number): string {
+        return this.getTurtle(turtleNo).innerText;
+    }
+    switchTurtleHighlight(turtleNo: number) {
+        if (turtleNo == null) {
+            return;
+        }
+        const turtle = this.getTurtle(turtleNo);
+        if (turtle.style.backgroundColor == "green") {
+            turtle.style.backgroundColor = "";
+        } else {
+            turtle.style.backgroundColor = "green";
+        }
+    }
+    /**
+     * Play the equivalent move of the selected turtles in nim
+     */
+    submit() {
+        if (this.firstTurtle == null) {
+            console.error("No turtle is selected. Cannot submit.");
+            return;
+        }
+        const pileSizes = this.nimGame.getPileSizes();
+        const pileIdx = pileSizes.indexOf(this.firstTurtle);
+        const newSize = this.secondTurtle != null ? this.secondTurtle : 0; 
+        this.nimGame.reduceNimPile(pileIdx, newSize);
+        // Clean turtles
+        //this.switchTurtleHighlight(this.firstTurtle);
+        //this.switchTurtleHighlight(this.secondTurtle);
+        this.firstTurtle = this.secondTurtle = null;
+    }
+    /**
+     * 
+     * @param turtleNo 1-indexed turtle no
+     */
+    onTurtleClicked(turtleNo: number) {
+        if (this.secondTurtle != null && this.firstTurtle == turtleNo) {
+            console.error("To deselect first turtle, deselect second turtle first.");
+            return;
+        }
+        if (this.secondTurtle == turtleNo) {
+            // Deselect turtle
+            this.switchTurtleHighlight(this.secondTurtle);
+            this.secondTurtle = null;
+            return;
+        }
+        if (this.firstTurtle == turtleNo) {
+            // Deselect turtle
+            this.switchTurtleHighlight(this.firstTurtle);
+            this.firstTurtle = null;
+            return;
+        }
+        // Select new turtle
+        if (this.firstTurtle != null && turtleNo > this.firstTurtle) {
+            console.error("Second turtle has to have a lower number!");
+            return;
+        }
+        if (this.firstTurtle == null &&
+            this.getTurtleState(turtleNo) == "H") {
+            // Select first turtle
+            this.firstTurtle = turtleNo;
+            this.switchTurtleHighlight(this.firstTurtle);
+            return;
+        }
+        if (this.firstTurtle != null && this.secondTurtle == null) {
+            // Select second turtle
+            this.secondTurtle = turtleNo;
+            this.switchTurtleHighlight(this.secondTurtle);
+            return;
+        }
+    }
     static turtleOnClick(this: HTMLElement, ev: MouseEvent) {
-        return;
         // Get TurtlesGUISlave
         const gameDiv = this.parentNode as HTMLElement;
-        const turtlesGameIndex = Number(gameDiv.dataset.nimIndex);
+        const turtlesGameIndex = Number(gameDiv.dataset.gameIndex);
         const turtlesGUISlave = TurtlesGUISlave.getTurtlesGUISlave(turtlesGameIndex);
+        const turtleNo = 1+Array.prototype.indexOf.call(gameDiv.children, this);
+        console.log("Turtle clicked", turtleNo);
+        turtlesGUISlave.onTurtleClicked(turtleNo);
+        return;
         // Check if it is our turn
         if (turtlesGUISlave.nimGame.vsCPU && 
             turtlesGUISlave.nimGame.player == 2) {
@@ -51,8 +130,8 @@ export default class TurtlesGUISlave {
             return;
         }
         // Resolve pile no and chip index
-        const turtleNo = Array.prototype.indexOf.call(gameDiv.children, this);
-        console.log("Turtle clicked", turtleNo);
+        //const turtleNo = Array.prototype.indexOf.call(gameDiv.children, this);
+        //console.log("Turtle clicked", turtleNo);
         // Change text
         TurtlesGUISlave.switchTurtle(this);
         // Tell the game about this

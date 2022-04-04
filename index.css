@@ -48,3 +48,9 @@
 h3, #info {
     text-align: center;
 }
+
+#turtleSubmit {
+    display: block;
+    width: 50%;
+    margin: 0 auto;
+}

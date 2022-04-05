@@ -1,7 +1,6 @@
 import NimGUI from "./NimGUI";
 
 export default class TurtlesGUISlave {
-    turtles: number;
     game: HTMLElement;
     static games: TurtlesGUISlave[] = [];
     nimGame: NimGUI;
@@ -9,7 +8,6 @@ export default class TurtlesGUISlave {
     secondTurtle: number;
 
     constructor(game: HTMLElement, nimGame: NimGUI, turtles: number) {
-        this.turtles = turtles;
         this.game = game;
         this.nimGame = nimGame;
         const idx = TurtlesGUISlave.games.push(this)-1;
@@ -19,8 +17,8 @@ export default class TurtlesGUISlave {
         return TurtlesGUISlave.games[gameIndex];
     }
     makeGame(nimPileSizes: number[], turtles: number = 10) {
-        this.turtles = turtles;
         // Clean game
+        this.firstTurtle = this.secondTurtle = null;
         this.game.innerHTML = "";
         for (let i = 0; i < turtles; i++) {
             const turtle = this.makeTurtle("T");
